@@ -1,7 +1,5 @@
 const templateCard = document.querySelector("#card-template").content;
 
-const cardList = document.querySelector(".places__list");
-
 function createCard(
   cardContent,
   deleteCardHandler,
@@ -36,4 +34,4 @@ function likeCard(evt) {
   targetEl.classList.toggle("card__like-button_is-active");
 }
 
-export { cardList, createCard, deleteCard, likeCard };
+export { createCard, deleteCard, likeCard };

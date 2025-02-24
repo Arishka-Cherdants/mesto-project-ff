@@ -44,17 +44,6 @@ const nameValue = document.querySelector(".profile__title");
 const jobValue = document.querySelector(".profile__description");
 const avatarValue = document.querySelector(".profile__image");
 
-//получаем информацию о поьзователе и отображаем на странице
-getUserInf()
-  .then((data) => {
-    nameValue.textContent = data.name;
-    jobValue.textContent = data.about;
-    avatarValue.setAttribute("style", `background-image: url(${data.avatar})`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
 buttonAvatar.addEventListener("click", () => showPopup(popupAvatar));
 
 //форма редактирования фотографии аватара
@@ -75,7 +64,7 @@ function submitEditAvatar(evt) {
     .finally(() => {
       clearValidation(formNewAvatar, objectF);
       formNewAvatar.reset();
-      closePopup(evt.target.closest(".popup"));
+      closePopup(popupAvatar);
       button.textContent = "Сохранить";
     });
 }
@@ -97,13 +86,11 @@ buttonClose.forEach((item) => {
 function showImagePopup(evt) {
   const targetEl = evt.target;
   const elImage = popupImage.querySelector(".popup__image");
-  const popupCaption = targetEl
-    .closest(".places__item")
-    .querySelector(".card__title").textContent;
+  const popupCaption = targetEl.alt;
   popupImage.querySelector(".popup__caption").textContent = popupCaption;
   console.log(popupCaption);
   elImage.src = targetEl.src;
-  elImage.alt = targetEl.alt;
+  elImage.alt = popupCaption;
   showPopup(popupImage);
 }
 
@@ -123,7 +110,7 @@ function submitEditProfileForm(evt) {
     })
     .finally(() => {
       formEditProfile.reset();
-      closePopup(evt.target.closest(".popup"));
+      closePopup(popupEdit);
       button.textContent = "Сохранить";
     });
 }
@@ -161,20 +148,17 @@ enableValidation(objectF);
 //отображение карточек на странице
 Promise.all([getInitialCards(), getUserInf()])
   .then(([cards, user]) => {
+    nameValue.textContent = user.name;
+    jobValue.textContent = user.about;
+    avatarValue.setAttribute("style", `background-image: url(${user.avatar})`);
     cards.forEach((card) => {
-      const newCard = createCard(card, deleteCard, likeCard, showImagePopup);
-      const cardDltBtn = newCard.querySelector(".card__delete-button");
-      if (card.owner.name !== user.name) {
-        cardDltBtn.setAttribute("style", "display:none");
-      }
-      const likeButton = newCard.querySelector(".card__like-button");
-      const likesName = card.likes.map(function (item) {
-        return item.name;
-      });
-
-      if (likesName.includes(user.name)) {
-        likeButton.classList.add("card__like-button_is-active");
-      }
+      const newCard = createCard(
+        card,
+        deleteCard,
+        likeCard,
+        showImagePopup,
+        user._id
+      );
       cardList.append(newCard);
     });
   })

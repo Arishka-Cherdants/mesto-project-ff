@@ -1,4 +1,4 @@
-import { deleeteCard, addLike, deleteLikeCounter } from "./api.js";
+import { deleeteCard, addLike, deleteLike } from "./api.js";
 
 const templateCard = document.querySelector("#card-template").content;
 
@@ -7,7 +7,8 @@ function createCard(
   cardContent,
   deleteCardHandler,
   likeCardHandler,
-  showImagePopupHandler
+  showImagePopupHandler,
+  userId
 ) {
   const cardEl = templateCard.querySelector(".card").cloneNode(true);
   const cardTitle = cardEl.querySelector(".card__title");
@@ -22,6 +23,17 @@ function createCard(
   cardImage.alt = cardContent.name;
   likeCounter.textContent = cardContent.likes.length;
 
+  if (cardContent.owner._id !== userId) {
+    cardDltBtn.setAttribute("style", "display:none");
+  }
+  const likesId = cardContent.likes.map(function (item) {
+    return item._id;
+  });
+
+  if (likesId.includes(userId)) {
+    likeButton.classList.add("card__like-button_is-active");
+  }
+
   cardDltBtn.addEventListener("click", deleteCardHandler);
   likeButton.addEventListener("click", likeCardHandler);
   cardImage.addEventListener("click", showImagePopupHandler);
@@ -33,34 +45,31 @@ function createCard(
 function deleteCard(evt) {
   const targetEl = evt.target;
   const cardEl = targetEl.closest(".card");
-  deleeteCard(cardEl.dataset.deleteId);
-  cardEl.remove();
+  deleeteCard(cardEl.dataset.deleteId)
+    .then(() => {
+      cardEl.remove();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
-
 
 //лайк карточки
 function likeCard(evt) {
   const targetEl = evt.target;
   const cardEl = targetEl.closest(".card");
   const likeCounter = cardEl.querySelector(".like__counter");
-  if (targetEl.classList.contains("card__like-button_is-active")) {
-    deleteLikeCounter(cardEl.dataset.deleteId)
-      .then((data) => {
-        likeCounter.textContent = data.likes.length;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } else {
-    addLike(cardEl.dataset.deleteId)
-      .then((data) => {
-        likeCounter.textContent = data.likes.length;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  targetEl.classList.toggle("card__like-button_is-active");
+  const likeMethod = targetEl.classList.contains("card__like-button_is-active")
+    ? deleteLike
+    : addLike;
+  likeMethod(cardEl.dataset.deleteId)
+    .then((data) => {
+      likeCounter.textContent = data.likes.length;
+      targetEl.classList.toggle("card__like-button_is-active");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 export { createCard, deleteCard, likeCard };

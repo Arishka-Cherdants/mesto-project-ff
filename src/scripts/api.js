@@ -51,7 +51,7 @@ export function deleeteCard(cardId) {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  });
+  }).then(handleResponse);
 }
 
 export function addLike(cardId) {
@@ -61,7 +61,7 @@ export function addLike(cardId) {
   }).then(handleResponse);
 }
 
-export function deleteLikeCounter(cardId) {
+export function deleteLike(cardId) {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers,

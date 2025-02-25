@@ -26,9 +26,9 @@ function createCard(
   if (cardContent.owner._id !== userId) {
     cardDltBtn.setAttribute("style", "display:none");
   }
-  if (cardContent.likes.some(item => item._id === userId)) {
+  if (cardContent.likes.some((item) => item._id === userId)) {
     likeButton.classList.add("card__like-button_is-active");
- }
+  }
   // const likesId = cardContent.likes.map(function (item) {
   //   return item._id;
   // });

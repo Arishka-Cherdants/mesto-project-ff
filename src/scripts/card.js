@@ -26,13 +26,16 @@ function createCard(
   if (cardContent.owner._id !== userId) {
     cardDltBtn.setAttribute("style", "display:none");
   }
-  const likesId = cardContent.likes.map(function (item) {
-    return item._id;
-  });
-
-  if (likesId.includes(userId)) {
+  if (cardContent.likes.some(item => item._id === userId)) {
     likeButton.classList.add("card__like-button_is-active");
-  }
+ }
+  // const likesId = cardContent.likes.map(function (item) {
+  //   return item._id;
+  // });
+
+  // if (likesId.includes(userId)) {
+  //   likeButton.classList.add("card__like-button_is-active");
+  // }
 
   cardDltBtn.addEventListener("click", deleteCardHandler);
   likeButton.addEventListener("click", likeCardHandler);

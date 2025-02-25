@@ -86,7 +86,7 @@ buttonClose.forEach((item) => {
 function showImagePopup(evt) {
   const targetEl = evt.target;
   const elImage = popupImage.querySelector(".popup__image");
-  const popupCaption = targetEl.alt;
+  const popupCaption = targetEl.alt
   popupImage.querySelector(".popup__caption").textContent = popupCaption;
   console.log(popupCaption);
   elImage.src = targetEl.src;
@@ -128,7 +128,7 @@ function addCard(evt) {
 
   createUserCard(cardNameInput.value, cardImageInput.value)
     .then((data) => {
-      cardList.prepend(createCard(data, deleteCard, likeCard, showImagePopup));
+      cardList.prepend(createCard(data, deleteCard, likeCard, showImagePopup, data.owner._id));
     })
     .catch((err) => {
       console.log(err);
@@ -165,3 +165,4 @@ Promise.all([getInitialCards(), getUserInf()])
   .catch((err) => {
     console.log(err);
   });
+
